@@ -1,5 +1,7 @@
 # AI Quality Toolkit
 
+[![CI](https://github.com/hmodali2611/ai-quality-toolkit/actions/workflows/ci.yml/badge.svg)](https://github.com/hmodali2611/ai-quality-toolkit/actions/workflows/ci.yml)
+
 Three tools for the quality problems AI-heavy teams hit first:
 
 1. **CI failure triage.** Reads JUnit results from Playwright, TestNG, Appium or pytest, sorts every failure into *product defect, test issue, environment* or *flaky*, groups failures that share a root cause, and drafts one Jira bug per real defect.
@@ -141,6 +143,10 @@ Point the assistant at a real model with `ASSISTANT_PROVIDER=openai` and `OPENAI
 ## Tech
 
 Python · DeepEval · Promptfoo · Ragas · LLM-as-a-judge · agent trajectory evaluation · OpenAI function calling · JUnit XML · Jira · pytest · GitHub Actions
+
+## Run with real models in CI
+
+Add an `OPENAI_API_KEY` repository secret, then run the **Real LLM evaluation** workflow from the Actions tab. It points the assistant and the agent at a real model and turns on LLM-as-a-judge, DeepEval GEval / Faithfulness / ToolCorrectness and Ragas. Results are uploaded as an artifact.
 
 ## License
 

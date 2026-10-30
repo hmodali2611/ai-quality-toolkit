@@ -1,0 +1,37 @@
+name: Real LLM evaluation
+# Runs the assistant and the agent on a real model and turns on LLM-as-a-judge,
+# DeepEval GEval/Faithfulness/ToolCorrectness and Ragas. Add the OPENAI_API_KEY secret to enable.
+on:
+  workflow_dispatch:
+jobs:
+  evaluate:
+    runs-on: ubuntu-latest
+    env:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      ASSISTANT_PROVIDER: openai
+      AGENT_PROVIDER: openai
+      DEEPEVAL_TELEMETRY_OPT_OUT: "YES"
+    steps:
+      - name: Check for API key
+        if: env.OPENAI_API_KEY == ''
+        run: |
+          echo "::error::Add the OPENAI_API_KEY repository secret to run this workflow."
+          exit 1
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -e ".[dev,deepeval,ragas]"
+      - name: Assistant eval with LLM judge
+        run: aiq eval --version v1 --judge --out out/llm/assistant-v1.json || true
+      - name: Agent eval with real function calling
+        run: aiq agent-eval --version v1 --out out/llm/agent-v1.json || true
+      - name: DeepEval (all metrics)
+        run: deepeval test run evals_deepeval || true
+      - name: Ragas
+        run: python evals_ragas/ragas_eval.py --version v1 || true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: llm-eval-results
+          path: out/
