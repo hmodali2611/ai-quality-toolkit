@@ -1,0 +1,38 @@
+name: CI
+on: [push, pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      DEEPEVAL_TELEMETRY_OPT_OUT: "YES"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: pip install -e ".[dev,deepeval]"
+      - name: Unit tests
+        run: pytest -q
+      - name: Triage sample CI runs
+        run: aiq triage examples/runs/run-1.xml examples/runs/run-2.xml examples/runs/run-3.xml --out out/triage
+      - name: Quality gate - baseline assistant must pass
+        run: aiq eval --version v1 --out out/v1.json
+      - name: Quality gate - regressed prompt must be blocked
+        run: "! aiq eval --version v2 --baseline out/v1.json"
+      - name: DeepEval suite (offline metrics; LLM-judge metrics run when OPENAI_API_KEY is set)
+        run: deepeval test run evals_deepeval/test_shop_assistant.py
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      - name: Promptfoo v1 vs v2 comparison (report only)
+        working-directory: promptfoo
+        run: npx -y promptfoo@latest eval -c promptfooconfig.yaml --no-cache || true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: quality-reports
+          path: |
+            out/
+            promptfoo/output.json

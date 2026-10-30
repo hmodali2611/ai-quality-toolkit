@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="shoplite-regression">
+  <testsuite name="web">
+    <testcase classname="CheckoutTest" name="applyPromoCode" time="2.3">
+      <failure message="expect(locator).toHaveText(expected) Expected: &quot;$39.20&quot; Received: &quot;$49.00&quot;">Error: expect(locator).toHaveText(expected)
+Expected: "$39.20"
+Received: "$49.00"
+    at checkout.spec.ts:42:31</failure>
+      <system-out>POST /api/cart/promo 200 {"applied":false,"code":"SAVE20","reason":"PROMO_NOT_FOUND"}</system-out>
+    </testcase>
+    <testcase classname="CheckoutTest" name="applyPromoCodeUppercase" time="2.2">
+      <failure message="expect(locator).toHaveText(expected) Expected: &quot;$39.20&quot; Received: &quot;$49.00&quot;">Error: expect(locator).toHaveText(expected)
+    at checkout.spec.ts:58:31</failure>
+    </testcase>
+    <testcase classname="CartTest" name="addItemToCart" time="1.1"/>
+    <testcase classname="OrderHistoryTest" name="ordersLoad" time="30.0">
+      <failure message="TimeoutError: locator.waitFor: Timeout 30000ms exceeded">TimeoutError: waiting for getByTestId('order-row') to be visible</failure>
+    </testcase>
+    <testcase classname="ProfileTest" name="updateAvatar" time="0.4">
+      <failure message="Error: page.goto: net::ERR_CONNECTION_REFUSED at https://media.staging.shoplite.test">Error: page.goto: net::ERR_CONNECTION_REFUSED</failure>
+    </testcase>
+    <testcase classname="SearchTest" name="searchByName" time="0.9"/>
+  </testsuite>
+  <testsuite name="ios">
+    <testcase classname="WishlistIOSTest" name="addToWishlist" time="6.1">
+      <error message="NoSuchElementException: An element could not be located on the page using the given search parameters (accessibility id: heart_button)" type="org.openqa.selenium.NoSuchElementException">org.openqa.selenium.NoSuchElementException: An element could not be located
+	at WishlistIOSTest.addToWishlist(WishlistIOSTest.java:33)</error>
+    </testcase>
+  </testsuite>
+</testsuites>

@@ -1,0 +1,23 @@
+# Compare the baseline prompt (v1) with the "be brief" prompt (v2) on the same golden cases.
+#   npx promptfoo@latest eval -c promptfoo/promptfooconfig.yaml
+#   npx promptfoo@latest view
+# tests.yaml is generated from datasets/golden.jsonl and runs offline.
+# Add LLM-graded correctness checks (needs OPENAI_API_KEY):
+#   aiq promptfoo-tests --llm-rubric
+description: ShopLite support assistant - v1 vs v2
+prompts:
+  - "{{question}}"
+providers:
+  - id: file://provider.py
+    label: assistant-v1
+    config:
+      version: v1
+  - id: file://provider.py
+    label: assistant-v2
+    config:
+      version: v2
+defaultTest:
+  options:
+    provider: openai:gpt-4o-mini
+tests: file://tests.yaml
+outputPath: output.json

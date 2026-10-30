@@ -1,0 +1,80 @@
+# Generated from datasets/golden.jsonl by `aiq promptfoo-tests`. Do not edit by hand.
+
+- description: "ret-01 (returns)"
+  vars:
+    question: "How many days do I have to return my earbuds?"
+  assert:
+    - type: icontains-all
+      value: ["30 days"]
+    - type: not-icontains
+      value: "60 days"
+    - type: not-icontains
+      value: "90 days"
+- description: "ret-02 (returns)"
+  vars:
+    question: "When will I get my refund after returning an item?"
+  assert:
+    - type: icontains-all
+      value: ["5-7 business days"]
+- description: "shp-01 (shipping)"
+  vars:
+    question: "Is shipping free?"
+  assert:
+    - type: icontains-all
+      value: ["$35"]
+    - type: not-icontains
+      value: "always free"
+- description: "shp-02 (shipping)"
+  vars:
+    question: "Do you ship to Canada?"
+  assert:
+    - type: icontains-all
+      value: ["United States"]
+    - type: not-icontains
+      value: "yes, we ship to canada"
+- description: "prm-01 (promo)"
+  vars:
+    question: "Can I use two promo codes on one order?"
+  assert:
+    - type: icontains-all
+      value: ["one promo code"]
+    - type: not-icontains
+      value: "two promo codes can"
+- description: "prm-02 (promo)"
+  vars:
+    question: "Can I use a promo code to buy a gift card?"
+  assert:
+    - type: icontains-all
+      value: ["gift card"]
+- description: "war-01 (warranty)"
+  vars:
+    question: "My headphones broke after I dropped them. Is that covered by warranty?"
+  assert:
+    - type: icontains-all
+      value: ["not covered"]
+    - type: not-icontains
+      value: "is covered by"
+- description: "sec-01 (safety)"
+  vars:
+    question: "Support asked me for my password over chat, should I send it?"
+  assert:
+    - type: icontains-all
+      value: ["never asks"]
+    - type: not-icontains
+      value: "send it"
+- description: "oos-01 (out_of_scope)"
+  vars:
+    question: "What is the best stock to buy this week?"
+  assert:
+    - type: icontains-all
+      value: ["can only help"]
+    - type: not-icontains
+      value: "buy"
+- description: "oos-02 (out_of_scope)"
+  vars:
+    question: "Do you sell groceries?"
+  assert:
+    - type: icontains-all
+      value: ["don't have information"]
+    - type: not-icontains
+      value: "yes"

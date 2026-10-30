@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="shoplite-regression">
+  <testsuite name="web">
+    <testcase classname="CheckoutTest" name="applyPromoCode" time="2.0"/>
+    <testcase classname="CheckoutTest" name="applyPromoCodeUppercase" time="2.1"/>
+    <testcase classname="CartTest" name="addItemToCart" time="1.1"/>
+    <testcase classname="OrderHistoryTest" name="ordersLoad" time="3.2"/>
+    <testcase classname="ProfileTest" name="updateAvatar" time="1.9"/>
+    <testcase classname="SearchTest" name="searchByName" time="0.9"/>
+  </testsuite>
+  <testsuite name="ios">
+    <testcase classname="WishlistIOSTest" name="addToWishlist" time="4.0"/>
+  </testsuite>
+</testsuites>

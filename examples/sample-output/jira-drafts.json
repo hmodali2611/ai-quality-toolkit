@@ -1,0 +1,21 @@
+[
+  {
+    "fields": {
+      "project": {
+        "key": "QA"
+      },
+      "issuetype": {
+        "name": "Bug"
+      },
+      "summary": "[Automation] applyPromoCode: expect(locator).toHaveText(expected) Expected: \"$39.20\" Received: \"$49.00\"",
+      "description": "Found by automated regression. Classified as a product defect by triage rules.\n\nFailing tests (2):\n- CheckoutTest.applyPromoCode\n- CheckoutTest.applyPromoCodeUppercase\n\nError: expect(locator).toHaveText(expected) Expected: \"$39.20\" Received: \"$49.00\"\nEvidence: POST /api/cart/promo 200 {\"applied\":false,\"code\":\"SAVE20\",\"reason\":\"PROMO_NOT_FOUND\"}\nFailed in runs: run-3",
+      "labels": [
+        "automation",
+        "triage-bot"
+      ],
+      "priority": {
+        "name": "High"
+      }
+    }
+  }
+]
