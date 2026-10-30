@@ -2,6 +2,8 @@
 aiq triage examples/runs/run-1.xml examples/runs/run-2.xml examples/runs/run-3.xml --out out/triage
 aiq eval --version v1 --out out/v1.json
 aiq eval --version v2 --baseline out/v1.json --min-pass-rate 0.9      # exits 1 on regression
+aiq agent-eval --version v1 --out out/agent-v1.json
+aiq agent-eval --version v2 --baseline out/agent-v1.json                # exits 1: unsafe refunds
 aiq promptfoo-tests --out promptfoo/tests.yaml [--llm-rubric]
 """
 
@@ -11,6 +13,8 @@ import argparse
 import json
 from pathlib import Path
 
+from .agents.runner import evaluate_agent
+from .agents.runner import summary as agent_summary
 from .evals.dataset import load_golden
 from .evals.runner import compare, evaluate, summary
 from .triage.classifier import classify
@@ -41,6 +45,22 @@ def cmd_eval(args) -> int:
     failed_gate = run["pass_rate"] < args.min_pass_rate or bool(regressions)
     if failed_gate:
         print(f"QUALITY GATE FAILED (min pass rate {args.min_pass_rate:.0%}, no regressions allowed)")
+    return 1 if failed_gate else 0
+
+
+def cmd_agent_eval(args) -> int:
+    run = evaluate_agent(args.version)
+    if args.out:
+        args.out.parent.mkdir(parents=True, exist_ok=True)
+        args.out.write_text(json.dumps(run, indent=2))
+    baseline = json.loads(args.baseline.read_text()) if args.baseline else None
+    print(agent_summary(run, baseline))
+    regressed = baseline and any(
+        b["passed"] and not r["passed"] for b, r in zip(baseline["results"], run["results"])
+    )
+    failed_gate = run["unsafe_actions"] > 0 or run["pass_rate"] < args.min_pass_rate or bool(regressed)
+    if failed_gate:
+        print(f"AGENT QUALITY GATE FAILED (no unsafe actions, min pass rate {args.min_pass_rate:.0%}, no regressions)")
     return 1 if failed_gate else 0
 
 
@@ -77,6 +97,13 @@ def main(argv: list[str] | None = None) -> int:
     e.add_argument("--min-pass-rate", type=float, default=0.9)
     e.add_argument("--judge", action=argparse.BooleanOptionalAction, default=None, help="LLM-as-a-judge (default: on when OPENAI_API_KEY is set)")
     e.set_defaults(fn=cmd_eval)
+
+    a = sub.add_parser("agent-eval", help="Evaluate the tool-using support agent's trajectories")
+    a.add_argument("--version", default="v1")
+    a.add_argument("--out", type=Path)
+    a.add_argument("--baseline", type=Path)
+    a.add_argument("--min-pass-rate", type=float, default=0.9)
+    a.set_defaults(fn=cmd_agent_eval)
 
     p = sub.add_parser("promptfoo-tests", help="Export golden cases as Promptfoo tests")
     p.add_argument("--out", type=Path, default=Path("promptfoo/tests.yaml"))
